@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Star } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 const menuCategories = [
   {
@@ -100,6 +102,23 @@ const menuCategories = [
 
 const Menu = () => {
   const [selectedCategory, setSelectedCategory] = useState("starters");
+  const { addItem } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = (item: typeof menuCategories[0]['items'][0]) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      vegetarian: item.vegetarian,
+    });
+    
+    toast({
+      title: "Added to cart!",
+      description: `${item.name} has been added to your cart.`,
+    });
+  };
 
   return (
     <section id="menu" className="py-20 bg-background">
@@ -146,7 +165,11 @@ const Menu = () => {
                             </Badge>
                           )}
                         </div>
-                        <Button size="sm" className="group-hover:shadow-sm">
+                        <Button 
+                          size="sm" 
+                          className="group-hover:shadow-sm"
+                          onClick={() => handleAddToCart(item)}
+                        >
                           <Plus className="h-4 w-4 mr-1" />
                           Add
                         </Button>
